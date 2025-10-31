@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday!</title>
+  <style>
+    :root{--bg:#0f172a;--card:#0b1220;--accent:#ff5c8a}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{display:grid;place-items:center;background:linear-gradient(180deg,#081226 0%, #0b1220 60%, #061021 100%);color:#fff}
+    .card{width:min(900px,94vw);background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.02));border-radius:18px;padding:32px;box-shadow:0 10px 30px rgba(2,6,23,0.7);position:relative;overflow:hidden}
+    header{display:flex;gap:20px;align-items:center}
+  .avatar{width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,#ffb6c1,#ffd27f);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;color:#0b1220;flex:0 0 110px;overflow:hidden;position:relative}
+  .avatar .initials{z-index:2;transition:opacity 300ms ease}
+  .avatar img{width:100%;height:100%;object-fit:cover;object-position:center center;border-radius:50%;position:absolute;left:0;top:0;display:block;opacity:0;transition:opacity 400ms ease}
+    h1{margin:0;font-size:36px;letter-spacing:-0.02em}
+    p.lead{margin:6px 0 0 0;opacity:0.9}
+    .row{display:flex;gap:24px;margin-top:22px;align-items:center}
+    .countdown{background:rgba(255,255,255,0.02);padding:14px;border-radius:12px;display:flex;gap:12px}
+    .countdown .item{text-align:center;padding:6px 12px}
+    .countdown .num{font-size:22px;font-weight:700}
+    .cake{margin-left:auto;display:flex;flex-direction:column;align-items:center}
+    .cake svg{width:160px;height:160px}
+    .btns{margin-top:18px;display:flex;gap:10px}
+    .btn{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;color:#071025;font-weight:700;cursor:pointer}
+    .confetti{position:absolute;left:0;top:0;pointer-events:none}
+    footer{display:none}
+    @media (max-width:600px){h1{font-size:28px}.avatar{width:84px;height:84px}}
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <canvas class="confetti" id="confettiCanvas"></canvas>
+    <header>
+    <div class="avatar" id="avatar"><span class="initials" id="initials">HF</span><img id="friendPhoto" src="Sanjib.jpg" alt="friend photo"></div>
+      <div>
+        <h1 id="greeting">Happy Birthday,Friend!</h1>
+        <p class="lead" id="sub">Wishing you a bright, joyful, and unforgettable day ahead 🎂🎉</p>
+        <div class="btns">
+          <button class="btn" id="partyBtn">Start Party 🎉</button>
+          <button class="btn" id="shareBtn">Copy Message</button>
+        </div>
+      </div>
+      <div class="cake">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <g>
+            <rect x="20" y="52" width="80" height="36" rx="6" fill="#ffe8d6" />
+            <rect x="26" y="58" width="68" height="24" rx="4" fill="#ffb6c1" />
+            <path d="M35 48c5-6 18-6 25 0" fill="#ffd27f" />
+            <g transform="translate(52,30)">
+              <rect x="0" y="0" width="4" height="14" rx="2" fill="#ffecb3" />
+              <path d="M2 0c1-3 2-3 2 0" fill="#ffb347" />
+            </g>
+          </g>
+        </svg>
+        <small id="dateText">Oct 31, 2025</small>
+      </div>
+    </header>
+    <div class="row">
+      <div class="countdown" id="countdown">
+        <div class="item"><div class="num" id="days">0</div><div>Days</div></div>
+        <div class="item"><div class="num" id="hours">0</div><div>Hours</div></div>
+        <div class="item"><div class="num" id="minutes">0</div><div>Minutes</div></div>
+        <div class="item"><div class="num" id="seconds">0</div><div>Seconds</div></div>
+      </div>
+      <div style="margin-left:16px;flex:1">
+        <p>Wishing you a birthday that's just as wonderful and special as you are. Enjoy your day!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const name = "Sanjib";
+    const targetDate = "2025-10-31T00:00:00";
+    const initials = "HF";
+    function readableDate(iso){
+      const d = new Date(iso);
+      return d.toLocaleString(undefined, { month: 'short', day:'numeric', year:'numeric' });
+    }
+    document.getElementById('greeting').textContent = `Happy Birthday, ${name}!`;
+  // place initials in the avatar span
+  document.getElementById('initials').textContent = initials;
+  const nameTextEl = document.getElementById('nameText');
+  if(nameTextEl) nameTextEl.textContent = name;
+    document.getElementById('dateText').textContent = readableDate(targetDate);
+
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minsEl = document.getElementById('minutes');
+    const secsEl = document.getElementById('seconds');
+    function updateCountdown(){
+      const now = new Date();
+      const target = new Date(targetDate);
+      let diff = target - now;
+      if(diff <= 0){
+        daysEl.textContent='0';hoursEl.textContent='0';minsEl.textContent='0';secsEl.textContent='0';
+        document.getElementById('sub').textContent = "It's your special day! 🎈";
+        return;
+      }
+      const s = Math.floor(diff/1000);
+      const days=Math.floor(s/86400),hours=Math.floor((s%86400)/3600),mins=Math.floor((s%3600)/60),secs=s%60;
+      daysEl.textContent=days;hoursEl.textContent=hours;minsEl.textContent=mins;secsEl.textContent=secs;
+    }
+    updateCountdown();setInterval(updateCountdown,1000);
+
+    document.getElementById('shareBtn').addEventListener('click', async ()=>{
+      const text = `Happy Birthday, ${name}! Hope your day shines bright 🎂✨`;
+      try{await navigator.clipboard.writeText(text);alert('Message copied to clipboard!');}
+      catch(e){prompt('Copy this message:',text);}
+    });
+
+    const canvas=document.getElementById('confettiCanvas');const ctx=canvas.getContext('2d');let W,H;const card=document.getElementById('card');
+    function resize(){W=canvas.width=card.clientWidth;H=canvas.height=card.clientHeight;}window.addEventListener('resize',resize);resize();
+
+    function Confetto(){this.x=Math.random()*W;this.y=-10;this.w=6+Math.random()*8;this.h=6+Math.random()*8;this.vx=-2+Math.random()*4;this.vy=2+Math.random()*4;this.rot=Math.random()*360;this.rvel=-5+Math.random()*10;this.color=['#ff5c8a','#ffd27f','#b6f0ff','#9be7b8','#cba6ff'][Math.floor(Math.random()*5)];}
+    Confetto.prototype.update=function(){this.x+=this.vx;this.y+=this.vy;this.rot+=this.rvel;this.vy+=0.05;}
+    Confetto.prototype.draw=function(ctx){ctx.save();ctx.translate(this.x,this.y);ctx.rotate(this.rot*Math.PI/180);ctx.fillStyle=this.color;ctx.fillRect(-this.w/2,-this.h/2,this.w,this.h);ctx.restore();}
+
+    let confetti=[];function spawn(n=30){for(let i=0;i<n;i++)confetti.push(new Confetto());}
+    function animate(){ctx.clearRect(0,0,W,H);for(let i=confetti.length-1;i>=0;i--){const c=confetti[i];c.update();c.draw(ctx);if(c.y>H+20||c.x<-50||c.x>W+50)confetti.splice(i,1);}requestAnimationFrame(animate);}animate();
+
+    document.getElementById('partyBtn').addEventListener('click',()=>{
+      spawn(60);
+      // short good wish
+      document.getElementById('sub').textContent = `Wishing you a day full of love, laughter, and cake! 🎂`;
+  // fade initials out and fade photo in
+  const img = document.getElementById('friendPhoto');
+  const initialsEl = document.getElementById('initials');
+  initialsEl.style.opacity = '0';
+  // ensure image is present and then fade in
+  img.style.display = 'block';
+  setTimeout(()=>{ img.style.opacity = '1'; }, 60);
+  // after animation, hide initials from accessibility tree
+  setTimeout(()=>{ initialsEl.style.display = 'none'; }, 380);
+    });
+    setTimeout(()=>spawn(30),400);
+  </script>
+</body>
+</html>
